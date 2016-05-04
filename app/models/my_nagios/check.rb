@@ -1,0 +1,47 @@
+module MyNagios
+  class Check < ActiveRecord::Base
+    belongs_to :group
+
+    enum status:  [ :info, :success, :critical ]
+    enum state:   [ :completed, :running ]
+
+    def run!
+      begin
+        self.update(state: :running)
+
+        Net::SSH.start( self.host, self.user, config: true, keys: [self.pem_key] ) do| ssh |
+          result = ssh.exec! self.command
+          self.update(status: Check.determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
+        end
+      rescue => e
+        self.update(status: :critical, latest_state: e, latest_updated_at: Time.now)
+      ensure
+        self.update(state: :completed)
+      end
+    end
+
+    def self.multiple_run!(checks, config)
+      begin
+        checks.update_all(state: :running)
+
+        Net::SSH.start( config[:host], config[:user], config: true, keys: [config[:pem_kew]] ) do |ssh|
+          checks.each do |check|
+            result = ssh.exec! check.command
+            check.update(status: Check.determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
+          end
+        end
+
+      rescue => e
+        checks.update_all(status: :critical, latest_state: e, latest_updated_at: Time.now)
+      ensure
+        checks.update_all(state: :completed)
+      end
+    end
+
+    def self.determinate_status_by_response(response)
+      :info     if response.nil?
+      :critical if response.scan('CRITICAL').blank?
+      :success
+    end
+  end
+end

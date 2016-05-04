@@ -1,0 +1,20 @@
+5min:
+  cron: "*/5 * * * *"
+  class: "ScheduleByIntervalJob"
+  queue: my_nagios_monitoring
+  args:
+    interval: 5
+
+15min:
+  cron: "*/15 * * * *"
+  class: "ScheduleByIntervalJob"
+  queue: my_nagios_monitoring
+  args:
+    interval: 15
+
+30min:
+  cron: "*/30 * * * *"
+  class: "ScheduleByIntervalJob"
+  queue: my_nagios_monitoring
+  args:
+    interval: 30

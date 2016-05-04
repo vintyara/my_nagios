@@ -1,0 +1,23 @@
+- run_now     ||= false
+- show_group  ||= false
+
+%tr{ id: dom_id(check) }
+  - if show_group
+    %td
+      %strong=check.group.name
+  - else
+    %td=check.command
+
+  %td
+    %span.label{ class: "label-#{status_to_label(check.status)}"}= check.status
+    =check.latest_state
+
+    - if show_group
+      %strong=check.command
+
+  %td=human_time(check.latest_updated_at)
+
+  - if run_now
+    %td
+      =link_to 'run now', run_now_check_path(check), class: 'check_now', method: :post, remote: true
+      =image_tag 'my_nagios/chasing_arrows.gif', class: 'spinner'

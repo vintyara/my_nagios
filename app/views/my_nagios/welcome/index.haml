@@ -1,0 +1,28 @@
+=link_to  'Add new check', new_check_path
+
+%h3 Critical errors:
+- if @criticals.blank?
+  %p No criticals
+- else
+  %table.table
+    %colgroup
+      %col{ width: '10%'}
+      %col{ width: '80%'}
+      %col{ width: '5%'}
+      %col{ width: '5%'}
+      - @criticals.each do |check|
+        = render partial: '/my_nagios/checks/check_row', locals: { check: check, show_group: true }
+
+#checks{ data: :no_turbolink }
+  - @group.each do |group|
+
+    %h3=group.name
+
+    %table.table
+      %colgroup
+        %col{ width: '10%'}
+        %col{ width: '80%'}
+        %col{ width: '5%'}
+        %col{ width: '5%'}
+      - group.checks.each do |check|
+        = render partial: '/my_nagios/checks/check_row', locals: { check: check, run_now: true }
