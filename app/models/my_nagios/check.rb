@@ -20,21 +20,23 @@ module MyNagios
       end
     end
 
-    def self.multiple_run!(checks, config)
-      begin
-        checks.update_all(state: :running)
+    def self.multiple_run!(check_ids, config)
+      check_list = MyNagios::Check.where(id: check_ids)
 
-        Net::SSH.start( config[:host], config[:user], config: true, keys: [config[:pem_kew]] ) do |ssh|
-          checks.each do |check|
+      begin
+        check_list.update_all(state: :running)
+
+        Net::SSH.start( config['host'], config['user'], config: true, keys: [config['pem_key']] ) do |ssh|
+          check_list.each do |check|
             result = ssh.exec! check.command
             check.update(status: Check.determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
           end
         end
 
       rescue => e
-        checks.update_all(status: :critical, latest_state: e, latest_updated_at: Time.now)
+        check_list.update_all(status: :critical, latest_state: e, latest_updated_at: Time.now)
       ensure
-        checks.update_all(state: :completed)
+        check_list.update_all(state: :completed)
       end
     end
 

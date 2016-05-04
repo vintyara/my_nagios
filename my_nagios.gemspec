@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = MyNagios::VERSION
   s.authors     = ["Vitaly Omelchenko"]
   s.email       = ["prosto.vint@gmail.com"]
-  s.homepage    = "TODO"
+  s.homepage    = "https://github.com/vintyara/my_nagios"
   s.summary     = "Simple monitoring"
   s.description = "Simple monitoring based on Nagios scripts"
   s.license     = "MIT"

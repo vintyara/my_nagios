@@ -16,6 +16,10 @@ module MyNagios
       return unless @check
 
       @check.run!
+
+      respond_to do |format|
+        format.js { render layout: false }
+      end
     end
 
     private
