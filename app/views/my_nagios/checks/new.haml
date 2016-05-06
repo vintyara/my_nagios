@@ -2,7 +2,7 @@ Add new check
 
 =form_for @check do |f|
   =f.label :group
-  =f.select :group, options_for_select( Group.all.map{|g| [g.name, g.id]} )
+  =f.select :group, options_for_select( MyNagios::Group.all.map{|g| [g.name, g.id]} )
   %br
   =f.label :host
   =f.text_field :host

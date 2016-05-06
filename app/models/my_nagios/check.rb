@@ -41,8 +41,8 @@ module MyNagios
     end
 
     def self.determinate_status_by_response(response)
-      :info     if response.nil?
-      :critical if response.scan('CRITICAL').blank?
+      return :critical if not response.scan('CRITICAL').blank?
+      return :info     if response.nil? or not response.scan('No such file or directory').blank?
       :success
     end
   end
