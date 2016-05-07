@@ -8,4 +8,10 @@
   * {
     font-size: 0.9em;
   }
+
+  table.check_list {
+    tr.disabled {
+      background-color: #e6e6e6;
+    }
+  }
 }

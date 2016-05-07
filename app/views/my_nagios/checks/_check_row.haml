@@ -1,7 +1,7 @@
 - run_now     ||= false
 - show_group  ||= false
 
-%tr{ id: dom_id(check) }
+%tr{ id: dom_id(check), class: (check.enabled? ? 'enabled' : 'disabled') }
   - if show_group
     %td
       %strong=check.group.name
@@ -19,5 +19,8 @@
 
   - if run_now
     %td
-      =link_to 'run now', run_now_check_path(check), class: 'check_now', method: :post, remote: true
-      =image_tag 'my_nagios/chasing_arrows.gif', class: 'spinner'
+      #check_now
+        =link_to 'run now', run_now_check_path(check), class: 'check_now', method: :post, remote: true
+        =image_tag 'my_nagios/chasing_arrows.gif', class: 'spinner'
+      #actions
+        =link_to (check.enabled? ? 'disable' : 'enable' ), toggle_check_path(check), class: 'disable_check', method: :post, data: { remote: true, confirm: 'Are you sure?' }

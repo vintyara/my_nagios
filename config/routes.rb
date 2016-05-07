@@ -6,6 +6,7 @@ MyNagios::Engine.routes.draw do
   resources :checks do
     member do
       post :run_now
+      post :toggle
     end
   end
 end

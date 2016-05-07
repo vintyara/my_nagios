@@ -5,6 +5,8 @@ module MyNagios
     enum status:  [ :info, :success, :critical ]
     enum state:   [ :completed, :running ]
 
+    scope :enabled, -> { where(enabled: true) }
+
     def run!
       begin
         self.update(state: :running)

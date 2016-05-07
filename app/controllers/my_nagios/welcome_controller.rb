@@ -5,7 +5,7 @@ module MyNagios
 
     def index
       @group      = Group.all.includes(:checks)
-      @criticals  = Check.where(status: Check.statuses[:critical])
+      @criticals  = Check.enabled.where(status: Check.statuses[:critical])
     end
 
   end
