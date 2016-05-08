@@ -2,7 +2,7 @@ require_dependency "my_nagios/application_controller"
 
 module MyNagios
   class ChecksController < ApplicationController
-    before_filter :find_check, only: [:run_now, :toggle]
+    before_filter :find_check, only: [:run_now, :toggle, :edit, :create, :update]
 
     def new
       @check = Check.new
@@ -10,6 +10,14 @@ module MyNagios
 
     def create
       @check = Check.create(params_check)
+      redirect_to root_path
+    end
+
+    def edit
+    end
+
+    def update
+      @check.update(params_check)
       redirect_to root_path
     end
 

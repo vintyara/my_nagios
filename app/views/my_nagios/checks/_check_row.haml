@@ -23,4 +23,6 @@
         =link_to 'run now', run_now_check_path(check), class: 'check_now', method: :post, remote: true
         =image_tag 'my_nagios/chasing_arrows.gif', class: 'spinner'
       #actions
+        %br
+        =link_to 'edit', edit_check_path(check)
         =link_to (check.enabled? ? 'disable' : 'enable' ), toggle_check_path(check), class: 'disable_check', method: :post, data: { remote: true, confirm: 'Are you sure?' }
