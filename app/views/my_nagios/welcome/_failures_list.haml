@@ -1,0 +1,16 @@
+#failures_list
+  .timer
+  %h3 Critical errors:
+
+  - if @criticals.blank?
+    %p No criticals
+  - else
+
+    %table.table.failures_list
+      %colgroup
+        %col{ width: '10%'}
+        %col{ width: '80%'}
+        %col{ width: '5%'}
+        %col{ width: '5%'}
+        - criticals.each do |check|
+          = render partial: '/my_nagios/checks/check_row', locals: { check: check, show_group: true }

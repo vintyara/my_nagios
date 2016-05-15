@@ -9,6 +9,20 @@
     font-size: 0.9em;
   }
 
+  #failures_list {
+    position: relative;
+
+    .timer {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+
+    table.failures_list.refresing {
+      color: #e6e6e6;
+    }
+  }
+
   table.check_list {
     tr.disabled {
       background-color: #e6e6e6;
