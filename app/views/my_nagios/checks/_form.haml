@@ -1,24 +1,40 @@
-=form_for @check do |f|
-  =f.label :group
-  =f.select :group, options_for_select( MyNagios::Group.all.map{|g| [g.name, g.id]} )
-  %br
-  =f.label :host
-  =f.text_field :host
-  %br
-  =f.label :user
-  =f.text_field :user
-  %br
-  =f.label :pem_key
-  =f.text_field :pem_key
-  %br
-  =f.label :description
-  =f.text_field :description
-  %br
-  =f.label :interval
-  =f.text_field :interval
-  %br
-  =f.label :command
-  =f.text_field :command
-  %br
+.row.col-sm-12
+  =form_for @check, html: { class: 'form-horizontal' } do |f|
+    .form-group
+      =f.label :group, class: 'col-sm-1 control-label'
+      .col-sm-10
+        =f.select :group, options_for_select( MyNagios::Group.all.map{|g| [g.name, g.id]}, @check.group_id ), class: 'form-control'
 
-  =f.submit
+    .form-group
+      =f.label :host, class: 'col-sm-1 control-label'
+      .col-sm-10
+        =f.text_field :host, class: 'form-control'
+
+    .form-group
+      =f.label :user, class: 'col-sm-1 control-label'
+      .col-sm-10
+        =f.text_field :user, class: 'form-control'
+
+    .form-group
+      =f.label :pem_key, class: 'col-sm-1 control-label'
+      .col-sm-10
+        =f.text_field :pem_key, class: 'form-control'
+
+    .form-group
+      =f.label :description, class: 'col-sm-1 control-label'
+      .col-sm-10
+        =f.text_field :description, class: 'form-control'
+
+    .form-group
+      =f.label :interval, class: 'col-sm-1 control-label'
+      .col-sm-10
+        =f.text_field :interval, class: 'form-control'
+
+    .form-group
+      =f.label :command, class: 'col-sm-1 control-label'
+      .col-sm-10
+        =f.text_field :command, class: 'form-control'
+
+    .form-group
+      .col-sm-10.col-sm-offset-1
+        =f.submit

@@ -1,10 +1,12 @@
 - run_now     ||= false
 - show_group  ||= false
 
-%tr{ id: dom_id(check), class: (check.enabled? ? 'enabled' : 'disabled') }
+- tr_id = show_group ? nil : dom_id(check)
+
+%tr{ id: tr_id, class: (check.enabled? ? 'enabled' : 'disabled') }
   - if show_group
     %td
-      %strong=check.group.name
+      =link_to check.group.name, "##{dom_id(check)}", class: 'fail_check'
   - else
     %td=check.command
 

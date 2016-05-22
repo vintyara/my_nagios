@@ -5,6 +5,10 @@
 
 
 #my_nagios_body {
+  a.fail_check {
+    font-weight: bold;
+  }
+
   .updating {
     color: #e6e6e6;
   }
