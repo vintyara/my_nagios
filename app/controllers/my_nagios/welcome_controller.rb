@@ -3,6 +3,7 @@ require_dependency "my_nagios/application_controller"
 module MyNagios
   class WelcomeController < ApplicationController
 
+    skip_before_action :verify_authenticity_token, only: [:autorefresh]
     before_filter :find_criticals, only: [:index, :autorefresh]
 
     def index
