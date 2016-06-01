@@ -8,7 +8,9 @@
     %td
       =link_to check.group.name, "##{dom_id(check)}", class: 'fail_check'
   - else
-    %td=check.command
+    %td
+      =check.command
+      ="(regexp: #{check.regexp})" unless check.regexp.blank?
 
   %td
     %span.label{ class: "label-#{status_to_label(check.status)}"}= check.status
