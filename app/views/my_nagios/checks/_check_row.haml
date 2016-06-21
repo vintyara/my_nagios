@@ -11,6 +11,7 @@
     %td
       =check.command
       ="(regexp: #{check.regexp})" unless check.regexp.blank?
+      %p.check_interval= "run every: #{check.interval} min"
 
   %td
     %span.label{ class: "label-#{status_to_label(check.status)}"}= check.status

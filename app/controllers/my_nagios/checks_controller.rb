@@ -2,11 +2,11 @@ require_dependency "my_nagios/application_controller"
 
 module MyNagios
   class ChecksController < ApplicationController
-    before_filter :find_check, only: [:run_now, :toggle, :edit, :update]
+    before_filter :find_check,  only: [:run_now, :toggle, :edit, :update]
+    before_filter :find_groups, only: [:create, :edit]
 
     def new
-      @check  = Check.new
-      @groups = MyNagios::Group.all
+      @check = Check.new
     end
 
     def create
@@ -42,6 +42,10 @@ module MyNagios
 
     def find_check
       @check = Check.find(params[:id])
+    end
+
+    def find_groups
+      @groups = MyNagios::Group.all
     end
 
     def params_check

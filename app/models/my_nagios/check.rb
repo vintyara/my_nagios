@@ -13,12 +13,10 @@ module MyNagios
 
         Net::SSH.start( self.host, self.user, config: true, keys: [self.pem_key], non_interactive: true ) do| ssh |
           result = ssh.exec! self.command
-          self.update(status: determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
+          self.update(state: :completed, status: self.determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
         end
       rescue => e
-        self.update(status: :info, latest_state: e, latest_updated_at: Time.now)
-      ensure
-        self.update(state: :completed)
+        self.update(state: :completed, status: :info, latest_state: e, latest_updated_at: Time.now)
       end
     end
 
@@ -31,18 +29,14 @@ module MyNagios
         Net::SSH.start( config['host'], config['user'], config: true, keys: [config['pem_key']], non_interactive: true ) do |ssh|
           check_list.each do |check|
             result = ssh.exec! check.command
-            check.update(status: determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
+            check.update(state: :completed, status: check.determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
           end
         end
 
       rescue => e
-        check_list.update_all(status: :info, latest_state: e, latest_updated_at: Time.now)
-      ensure
-        check_list.update_all(state: :completed)
+        check_list.update_all(state: :completed, status: :info, latest_state: e, latest_updated_at: Time.now)
       end
     end
-
-    private
 
     def determinate_status_by_response(response)
       return :critical if not regexp.blank? and response =~ /#{regexp}/
