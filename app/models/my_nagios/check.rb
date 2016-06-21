@@ -7,13 +7,19 @@ module MyNagios
 
     scope :enabled, -> { where(enabled: true) }
 
+    attr_accessor :additional_command_result
+
     def run!
       begin
         self.update(state: :running)
 
         Net::SSH.start( self.host, self.user, config: true, keys: [self.pem_key], non_interactive: true ) do| ssh |
           result = ssh.exec! self.command
-          self.update(state: :completed, status: self.determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
+          status = self.determinate_status_by_response(result)
+
+          self.additional_command_result = ssh.exec!(self.additional_command) if not self.additional_command.blank? and status.eql?(:critical)
+
+          self.update(state: :completed, status: status, latest_state: result, latest_updated_at: Time.now)
         end
       rescue => e
         self.update(state: :completed, status: :info, latest_state: e, latest_updated_at: Time.now)
@@ -29,7 +35,11 @@ module MyNagios
         Net::SSH.start( config['host'], config['user'], config: true, keys: [config['pem_key']], non_interactive: true ) do |ssh|
           check_list.each do |check|
             result = ssh.exec! check.command
-            check.update(state: :completed, status: check.determinate_status_by_response(result), latest_state: result, latest_updated_at: Time.now)
+            status = check.determinate_status_by_response(result)
+
+            check.additional_command_result = ssh.exec!(check.additional_command) if not check.additional_command.blank? and status.eql?(:critical)
+
+            check.update(state: :completed, status: status, latest_state: result, latest_updated_at: Time.now)
           end
         end
 
