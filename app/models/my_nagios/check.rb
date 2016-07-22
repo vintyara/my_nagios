@@ -9,11 +9,13 @@ module MyNagios
 
     attr_accessor :additional_command_result
 
+    INFO_STATES = ['AuthenticationFailed message', 'No such file or directory']
+
     def run!
       begin
         self.update(state: :running)
 
-        Net::SSH.start( self.host, self.user, config: true, keys: [self.pem_key], non_interactive: true ) do| ssh |
+        Net::SSH.start( self.host, self.user, MyNagios::Check.ssh_config(self.pem_key) ) do |ssh|
           result = ssh.exec! self.command
           status = self.determinate_status_by_response(result)
 
@@ -32,7 +34,7 @@ module MyNagios
       begin
         check_list.update_all(state: :running)
 
-        Net::SSH.start( config['host'], config['user'], config: true, keys: [config['pem_key']], non_interactive: true ) do |ssh|
+        Net::SSH.start( config['host'], config['user'], MyNagios::Check.ssh_config(config['pem_key']) ) do |ssh|
           check_list.each do |check|
             result = ssh.exec! check.command
             status = check.determinate_status_by_response(result)
@@ -51,8 +53,16 @@ module MyNagios
     def determinate_status_by_response(response)
       return :critical if not regexp.blank? and response =~ /#{regexp}/
       return :critical if not response.scan('CRITICAL').blank?
-      return :info     if response.nil? or not response.scan('No such file or directory').blank?
+      return :info     if response.nil? or MyNagios::Check::INFO_STATES.any? { |msg| response.include?(msg) }
       :success
     end
+
+    def self.ssh_config(pem_key = nil)
+      config = { config: true, non_interactive: true, auth_methods: ['publickey', 'hostbased'] }
+      config[:keys] = [pem_key] unless pem_key.blank?
+
+      config
+    end
+
   end
 end
