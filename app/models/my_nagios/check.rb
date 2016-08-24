@@ -5,11 +5,13 @@ module MyNagios
     enum status:  [ :info, :success, :critical ]
     enum state:   [ :completed, :running ]
 
-    scope :enabled, -> { where(enabled: true) }
+    scope :enabled,     -> { where(enabled: true) }
+    scope :not_snoozed, -> { where('`my_nagios_checks`.`snooze_for` <= UTC_TIMESTAMP() OR `my_nagios_checks`.`snooze_for` IS NULL') }
 
     attr_accessor :additional_command_result
 
-    INFO_STATES = ['AuthenticationFailed message', 'No such file or directory']
+    INFO_STATES  = ['AuthenticationFailed message', 'No such file or directory']
+    ERROR_STATES = ['!ruby/exception', 'packet_write_wait: Connection to UNKNOWN: Broken pipe']
 
     def run!
       begin
@@ -46,7 +48,7 @@ module MyNagios
         end
 
       rescue => e
-        check_list.update_all(state: :completed, status: :info, latest_state: e, latest_updated_at: Time.now)
+        check_list.each { |check| check.update(state: :completed, status: :info, latest_state: e, latest_updated_at: Time.now) }
       end
     end
 

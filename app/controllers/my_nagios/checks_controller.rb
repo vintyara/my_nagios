@@ -38,6 +38,22 @@ module MyNagios
       end
     end
 
+    def group_action
+      check_ids = params["group_action_check_ids"].split(',')
+      redirect_to root_path and return if check_ids.blank?
+
+      case params['check_group_action'].downcase
+      when 'disable'
+        Check.where(id: check_ids).update_all(enabled: false)
+      when 'enable'
+        Check.where(id: check_ids).update_all(enabled: true)
+      when 'snooze for'
+        Check.where(id: check_ids).update_all(snooze_for: (Time.now + params['snooze_time_select'].to_i.minutes))
+      end
+
+      redirect_to root_path
+    end
+
     private
 
     def find_check

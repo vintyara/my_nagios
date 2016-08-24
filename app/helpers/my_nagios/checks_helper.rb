@@ -3,7 +3,8 @@ module MyNagios
 
     def human_time(time)
       return '-' unless time
-      "#{((Time.now - time) / 60).to_i} minutes ago"
+
+      distance_of_time_in_words(time, Time.now) + ' ago'
     end
 
     def status_to_label(status)

@@ -1,9 +1,14 @@
 - run_now     ||= false
 - show_group  ||= false
+- is_snooze     = check.snooze_for && (check.snooze_for.utc > Time.now.utc)
 
 - tr_id = show_group ? nil : dom_id(check)
+- tr_html_class  = check.enabled? ? 'enabled' : 'disabled'
+- tr_html_class += ' alert alert-info' if is_snooze
 
-%tr{ id: tr_id, class: (check.enabled? ? 'enabled' : 'disabled') }
+- td_html_class = is_snooze ? 'snooze_for' : ''
+
+%tr{ id: tr_id, class: tr_html_class }
   - if show_group
     %td
       =link_to check.group.name, "##{dom_id(check)}", class: 'fail_check'
@@ -13,9 +18,13 @@
       ="(regexp: #{check.regexp})" unless check.regexp.blank?
       %p.check_interval= "run every: #{check.interval} min"
 
-  %td
+  %td{ class: td_html_class }
     %span.label{ class: "label-#{status_to_label(check.status)}"}= check.status
     =check.latest_state
+
+    - if is_snooze
+      %div.snooze_for
+        Snooze for: #{check.snooze_for}
 
     - if show_group
       %strong=check.command
@@ -31,3 +40,7 @@
         %br
         =link_to 'edit', edit_check_path(check)
         =link_to (check.enabled? ? 'disable' : 'enable' ), toggle_check_path(check), class: 'disable_check', method: :post, data: { remote: true, confirm: 'Are you sure?' }
+
+    %td
+      .checkbox_holder.my_nagios_check
+        =check_box_tag dom_id(check, :checkbox), nil, false, data: { check_id: check.id }, class: "group_#{check.group_id}"

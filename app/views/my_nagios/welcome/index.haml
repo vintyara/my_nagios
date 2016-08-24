@@ -2,16 +2,44 @@
 
 = render partial: 'failures_list', locals: { criticals: @criticals, show_group: true }
 
+#group_action.text-center.alert.alert-warning{ role: :alert }
+  =form_tag group_action_path do
+    Please, set action for selected checks:
+    =select_tag :check_group_action, options_for_select(['Disable', 'Enable', 'Snooze for'])
+    =select_tag :snooze_time_select, options_for_select(['15 min', '30 min', '60 min'])
+    =hidden_field_tag :group_action_check_ids
+    =submit_tag
+
+
+
 #checks{ data: :no_turbolink }
-  - @group.each do |group|
+  %table.table.check_list
+    %colgroup
+      %col{ width: '10%'}
+      %col{ width: '78%'}
+      %col{ width: '5%'}
+      %col{ width: '5%'}
+      %col{ width: '2%'}
+    %tr
+      %td
+      %td
+      %td
+      %td
+      %td
+        .checkbox_holder
+          =check_box_tag :select_all
 
-    %h3=group.name
+    - @group.each do |group|
+      %tr
+        %td{ colspan: 2 }
+          %h3=group.name
+        %td
+          %h4 Last run:
+        %td
+          %h4 Actions:
+        %td
+          .checkbox_holder
+            =check_box_tag "select_all_group_#{group.id}", nil, false, class: 'select_all_group', data: { select_all_group: group.id}
 
-    %table.table.check_list
-      %colgroup
-        %col{ width: '10%'}
-        %col{ width: '80%'}
-        %col{ width: '5%'}
-        %col{ width: '5%'}
       - group.checks.each do |check|
         = render partial: '/my_nagios/checks/check_row', locals: { check: check, run_now: true }
